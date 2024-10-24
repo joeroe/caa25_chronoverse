@@ -1,0 +1,32 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 Paper submission for CAA2025, Athens, S1: \u8220"Chronological modelling II: formal methods and research software\u8221"\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel0 \b \fs36 The chronoverse \u8211- towards a common language for chronological modelling in R\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Joe Roe\line Institute for Archaeological Sciences, University of Bern\line {\field{\*\fldinst{HYPERLINK "https://joeroe.io"}}{\fldrslt{\ul
+https://joeroe.io
+}}}
+\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 Abstract\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 There are now quite a large number of R packages for chronological modelling (Marwick et al. 2023). These include methods developed specifically by or for archaeologists as well as those borrowed from adjacent fields. Many other types of analysis incorporate chronological data in an {\i ad hoc} way. As the range and complexity of these analytic procedures increases, it is can be difficult to integrate the varied data types, interfaces, and output formats into a single workflow \u8211- to get different packages to \u8220"talk to each other\u8221". This is a common problem, especially in decentralised software ecosystems such as R. In other domains, the solution has often common in the form of computational \u8216'infrastructure\u8217': packages that smooth the way by providing consistent formal representations, a common set of basic methods, and a predictable user interface patterns.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 In this paper, I introduce three interconnected R packages:\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\i era} provides formal representations of year-based time scales of the type usually used by archaeologists and other palaeoscientists (e.g.\u160 ?Before Present)\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\i c14} facilitates \u8216'tidy\u8217' analysis of radiocarbon data, including further formal classes for uncalibrated measurements and calibrated, calendar probability distributions, as well as functions for converting data types from existing radiocarbon-analysis packages into tidy formats\par}
+{\pard \ql \f0 \sa0 \li360 \fi-360 \bullet \tx360\tab {\i stratigraphr} is a framework for working with stratigraphies and relative chronologies as directed graphs, with tools for reading, analysing, and visualing these stratigraphic graphs (\u8216'Harris matrices\u8217')\sa180\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 As well as implementing various analytical methods, the aim of these packages is to provide a common infrastructure for the formal representation of chronological data and a set of consistent tools for reasoning with it. All three make extensive use of tooling and design patterns from the {\i tidyverse} (Wickham et al. 2019) to present a predictable user interface that fits into a wider ecosystem of R packages. In particular, they use {\i vctrs}-based formalisms to represent different types of chronological vectors, a functional paradigm for composing programs, and assume/encourage the use of a tidy data workflow (Wickham 2014).\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 A common computational infrastructure for chronological data makes it easier to \u8216'glue together\u8217' varied packages for chronological modelling within a single analysis. And by linking it to an existing, widely-used paradigm (the {\i tidyverse}) we can take this further, smoothing the way for the integration of chronological data into a wide range of other methodologies. The packages outlined here are not intended to be the definitive version of such an infrastructure but, I suggest, could serve as the rudiments of a common language for chronological modelling in R \u8211- a \u8216'chronoverse\u8217'.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 \outlinelevel1 \b \fs32 References\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Marwick, Ben, Bj\u248 ?rn Peare Bartholdy, Nicolas Frerebeau, Sam Leggett, Sarah Pederzani, Joe Roe, Sophie C. Schmidt, et al. 2023. \u8220"CRAN Task View: Archaeology.\u8221" {\field{\*\fldinst{HYPERLINK "https://github.com/benmarwick/ctv-archaeology/blob/master/Archaeology.md"}}{\fldrslt{\ul
+https://github.com/benmarwick/ctv-archaeology/blob/master/Archaeology.md
+}}}
+.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Wickham, Hadley. 2014. \u8220"Tidy Data.\u8221" {\i Journal of Statistical Software} 59 (10): 1\u8211-23. {\field{\*\fldinst{HYPERLINK "https://doi.org/10.18637/jss.v059.i10"}}{\fldrslt{\ul
+https://doi.org/10.18637/jss.v059.i10
+}}}
+.\par}
+{\pard \ql \f0 \sa180 \li0 \fi0 Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D\u8217'Agostino McGowan, Romain Fran\u231 ?ois, Garrett Grolemund, et al. 2019. \u8220"Welcome to the Tidyverse.\u8221" {\i Journal of Open Source Software} 4 (43): 1686. {\field{\*\fldinst{HYPERLINK "https://doi.org/10.21105/joss.01686"}}{\fldrslt{\ul
+https://doi.org/10.21105/joss.01686
+}}}
+.\par}
+}
