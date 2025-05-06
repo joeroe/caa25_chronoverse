@@ -1,0 +1,17 @@
+/*-- scss:defaults --*/
+
+$body-bg: #282828 !default;
+$body-color: #ebdbb2 !default;
+$link-color: #458588 !default;
+$presentation-heading-color: #98971a !default;
+$input-panel-bg: #3c3836 !default;
+
+// Fonts
+$font-family-sans-serif: "Inter";
+$font-family-monospace: "Fira Code", monospace;
+
+$presentation-h1-font-size: 2.4em;
+
+.reveal small {
+  vertical-align: baseline !important;
+}

@@ -1,0 +1,383 @@
+---
+title: The chronoverse
+subtitle: Towards a common language for chronological modelling in R
+author: "Joe Roe<br><small><<https://joeroe.io>></small>"
+affiliation: "University of Copenhagen"
+url: "https://joeroe.io"
+format: 
+  revealjs:
+    theme: ./gruvbox-dark.scss
+    center: true
+    echo: true
+execute:
+  cache: true
+---
+
+```{r echo=FALSE}
+library(tibble)
+options(pillar.print_min = 3)
+options(pillar.print_max = 5)
+options(pillar.width = 60)
+```
+
+```{r echo=FALSE, cache=FALSE}
+library(conflicted)
+conflicted::conflicts_prefer(c14::c14_calibrate)
+conflicted::conflicts_prefer(c14::cal_sum)
+conflicted::conflicts_prefer(dplyr::filter)
+```
+
+## 'Analysis of Dates and Chronological Patterns' in R {.small}
+
+<small>Marwick et al., *CTV Archaeology*, <https://github.com/benmarwick/ctv-archaeology></small>
+
+:::: {.columns}
+
+::: {.column}
+<small>Radiometric Dating</small>
+: <small>rcarbon, rintcal, Bchron, clam, nimbleCarbon, rbacon, coffee, oxcAAR, ArchaeoPhases, spDates, IsoplotR, [c14]{.mark}, c14bazAAR, UThwigl, ADMUR, ArchaeoChron<br><br></small>
+
+<small>Dendrochronology</small>
+: <small>dendroNetwork, fellingdater</small>
+
+<small>Luminescence Dating</small>
+: <small>Luminescence, numOSL, BayLum</small>
+:::
+
+:::{.column}
+<small>Paleoenvironmental Proxies</small>
+: <small>tidypaleo, shoredate</small>
+
+<small>Archaeological Time Series</small>
+: <small>[era]{.mark}, aion, aoristic, kairos, aoristAAR, SPARTAAS, datplot, archSeries, eratosthenes</small>
+
+<small>Stratigraphic Analysis</small>
+: <small>archeofrag, [stratigraphr]{.mark}</small>
+
+<small>Radiocarbon Datasets and APIs</small>
+: <small>BSDA, c14bazAAR, p3k14c, xronos, rintchron, ArchaeoData</small>
+:::
+
+::::
+
+## Idiomatic R
+
+:::: {.fragments}
+
+::: {.fragment .semi-fade-out}
+* Vectorisation (everything is a vector)
+* Rectangular data frames
+* Functional programming
+* Function-based OOP (S3, S7)
+* Metaprogramming
+:::
+
+::: {.fragment}
+* (Tidy) data as first argument
+* Pipes for function composition (`%>%`, `|>`)
+:::
+
+::::
+
+# 📦 c14
+
+## 📦 c14 <<https://c14.joeroe.io>>
+
+Tidy radiocarbon data:
+
+* Converting and calibrating radiocarbon measurements
+* S3 vector for calendar probability distributions <small>(`cal`, e.g. calibrated radiocarbon dates)</small>
+* Summarising and aggregating calendar probability distributions
+* Cleaning radiocarbon datasets <small>(e.g. `c14_control_lab_id()`)</small>
+* Conversion between types in common radiocarbon packages
+
+---
+
+## Tidy radiocarbon calibration
+
+```{r eg-c14-filter-mutate}
+library(c14)
+library(dplyr)
+ppnd |>
+  mutate(cal = c14_calibrate(cra, error)) |>
+  filter(site == "Ganj Dareh") |>
+  select(lab_id, cal)
+```
+
+---
+
+## Tidy radiocarbon aggregation
+
+```{r eg-c14-summarise}
+ppnd |>
+  mutate(cal = c14_calibrate(cra, error)) |>
+  summarise(cal_sum = cal_sum(cal), .by = site) # or cal_density()
+```
+
+---
+
+## `cal` vectors
+
+vctrs-based S3 class for calendar probability distributions (e.g. calibrated radiocarbon dates)
+
+```{r eg-cal}
+ganj_dareh <- ppnd[ppnd$site == "Ganj Dareh",]
+asiab <- ppnd[ppnd$site == "Asiab",]
+
+ganj_dareh_cal <- c14_calibrate(ganj_dareh$cra, ganj_dareh$error)
+asiab_cal <- c14_calibrate(asiab$cra, asiab$error)
+
+c(ganj_dareh_cal, asiab_cal)
+```
+
+# 📦 stratigraphr
+
+## <small>📦 stratigraphr <<https://stratigraphr.joeroe.io>></small>
+
+Tidy framework archaeological stratigraphy and chronology:
+
+* Read & write stratigraphic data
+* Graph representation of stratigraphic sequences <small>(Dye & Buck 2015, <https://doi.org/10.1016/j.jas.2015.08.008>)</small>
+* Validate and clean stratigraphs
+* R interface to OxCal's Chronological Query Language (CQL)
+
+---
+
+## Import stratigraphic data
+
+:::: {.columns}
+
+::: {.column}
+```{r eg-stratigraphr-read-csv}
+library(readr)
+read_csv("example_data/harris12.csv")
+```
+:::
+
+::: {.column}
+```{r eg-stratigraphr-read-lst}
+library(stratigraphr)
+read_lst("example_data/bonn.lst")
+```
+:::
+
+::::
+
+## Stratigraphs
+
+```{r eg-stratigraphs}
+h12 <- stratigraph(harris12, "context", "above")
+strg_prune(h12) # Harris' 'Law of Succession'
+```
+
+## Plotting 'Harris matrixes'
+
+E.g. with ggraph <<https://ggraph.data-imaginist.com/>>:
+
+```{r eg-ggraph}
+library(ggraph)
+ggraph(h12, layout = "sugiyama") +
+  geom_edge_elbow() +
+  geom_node_label(aes(label = context), label.r = unit(0, "mm")) +
+  theme_graph()
+```
+
+---
+
+## Validating stratigraphs
+
+```{r}
+strat_is_valid(h12)
+```
+
+```{r warning=TRUE}
+bad_h12 <- tidygraph::bind_edges(h12, data.frame(from = 6, to = 5))
+strat_is_valid(bad_h12)
+```
+
+## Bayesian stratigraphic models with stratigraphr + c14
+
+:::: {.columns}
+
+::: {.column}
+```{r}
+shub1_radiocarbon |> 
+  filter(!outlier) |> 
+  group_by(phase) |> 
+  summarise(
+    cql = cql_phase(phase, 
+                    cql_r_date(lab_id, cra, error))
+  ) |> 
+  arrange(desc(phase)) |> 
+  summarise(
+    cql = cql_sequence("Shubayqa 1", 
+                       cql, 
+                       boundaries = TRUE)
+  ) |>
+  pluck("cql") |>
+  cql() ->
+  shub1_cql
+```
+:::
+
+::: {.column}
+```{r echo=FALSE}
+shub1_cql
+```
+:::
+
+::::
+
+---
+
+📦 oxcAAR <<https://github.com/ISAAKiel/oxcAAR>>
+
+```{r eg-oxcaar, eval=FALSE}
+# Not executed (too slow)
+library(oxcAAR)
+quickSetupOxcal(path = fs::path_temp())
+shub1_oxcal <- executeOxcalScript(shub1_cql)
+readOxcalOutput(shub1_oxcal) |> 
+  parseOxcalOutput() |> 
+  plot()
+```
+
+# 📦 era
+
+## 📦 era <<https://era.joeroe.io>>
+
+* S3 vector class for year-based real time scales <small>(`yr`)</small>
+* Standard for defining *eras* <small>(e.g. Common Era, Before Present, Hijri)</small>
+* General function for conversion between eras
+* Principled concatenation, coercion, and arithmetic rules
+* Chronology-aware methods <small>(e.g. `yr_earliest()`, `yr_sort()`)</small>
+
+## Years with era
+
+```{r eg-yr}
+library(era)
+years <- yr(c(1100, 1200, 1300), "cal BP")
+years
+```
+
+```{r eg-yr_transform}
+yr_transform(years, "AH")
+```
+
+## Era definition
+
+:::: {.columns}
+
+::: {.column}
+* label
+* epoch
+* name
+* unit
+* scale
+* direction
+:::
+
+::: {.column}
+```{r eg-era-def}
+era(
+    label = "T.A.", 
+    epoch = -9021, 
+    name = "Third Age", 
+    unit = era_year("Gregorian"),
+    scale = 1,
+    direction = 1
+)
+```
+:::
+
+::::
+
+## When it's working, you don't notice it
+
+```{r eg-era-errors, error=TRUE}
+x <- yr(1:3, "BP")
+y <- yr(4:6, "cal BP")
+z <- yr(7:9, "uncal BP")
+
+y - x
+
+c(y, z)
+
+yr_transform(z, yr_era(x)) # No shortcut to calibration!
+```
+
+## 📦 tempo 
+
+<small><https://github.com/joeroe/tempo></small>
+
+* Temporal intervals (periods)
+* Temporal relations (Allen + Levy's extended typology)
+
+```{r eg-tempo}
+library("tempo")
+#> Loading required package: rlang
+
+period1 <- c(1500, 1900)
+period2 <- c(1800, 1950)
+
+contemporary_with(period1, period2)
+```
+
+# A 'chronoverse'?
+
+## An 'ecosystem' of packages
+
+Packages that work well together *or* alone:
+
+* Build up on base R (vector) types and generics
+* Use explicit classes (S3, S4, or S7)
+* Use understandable, predictable and unambiguous function names
+* Have a common and predictable function signature (e.g. `.data`-first)
+* Avoid complex/idiosyncratic data structures
+
+## R package ecosystems
+
+* tidyverse
+* tidymodels
+* easystats
+* r-spatial / rspatial
+* tesselle
+
+## Rudiments of a 'chronoverse'
+
+c14, stratigraphr, era:  
+<small>(And tempo, rintchron, xronos, chronologr)</small>
+
+* *vctrs*-based formalisms to represent different types of chronological vectors
+* Functional paradigm for composing programs
+* Assume/encourage the use of a tidy data
+
+## <https://github.com/r-chrono> {.center}
+
+# <small>The chronoverse – towards a common language for chronological modelling in R</small>
+
+<small>Joe Roe <<https://joeroe.io>>  
+University of Copenhagen</small>
+
+:::: {.columns}
+
+::: {.column}
+📦 c14
+: <small><https://c14.joeroe.io></small>
+
+📦 stratigraphr
+: <small><https://stratigraphr.joeroe.io></small>
+
+📦 era
+: <small><https://era.joeroe.io></small>
+
+📦 tempo (v0.0.9000!)
+: <small><https://github.com/joeroe/tempo></small>
+:::
+
+::: {.column}
+{{< fa brands github >}} these slides:
+: <small><https://github.com/joeroe/caa25_chronoverse></small>
+:::
+
+::::
