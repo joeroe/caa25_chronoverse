@@ -1,0 +1,15 @@
+tibble
+conflicted
+c14
+dplyr
+future
+purrr
+readr
+stratigraphr
+ggplot2
+ggraph
+era
+rlang
+vctrs
+zeallot
+tempo
