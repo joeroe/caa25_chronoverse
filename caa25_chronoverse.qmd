@@ -11,6 +11,8 @@ format:
     echo: true
 execute:
   cache: true
+render:
+  embed-resources: true
 ---
 
 ```{r echo=FALSE}
