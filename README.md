@@ -1,7 +1,7 @@
 # The chronoverse – towards a common language for chronological modelling in R
 
 Joe Roe  
-Institute for Archaeological Sciences, University of Bern  
+University of Copenhagen  
 <https://joeroe.io>
 
 This research compendium contains the slides, data and source code for a paper presented at the Computational and Quantitative Methods in Archaeology (CAA) conference in Athens, 6 May 2026. The paper was presented in session S1, "Chronological modelling II: formal methods and research software", convened by Eythan Levy and Thomas Huet.
