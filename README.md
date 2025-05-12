@@ -1,5 +1,7 @@
 # The chronoverse – towards a common language for chronological modelling in R
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15388369.svg)](https://doi.org/10.5281/zenodo.15388369)
+
 Joe Roe  
 University of Copenhagen  
 <https://joeroe.io>
